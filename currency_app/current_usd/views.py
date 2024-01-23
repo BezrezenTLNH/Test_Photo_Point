@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 import requests
 from django.http import JsonResponse
@@ -15,7 +16,7 @@ def get_current_usd(request):
 
     # Save the current request in the history
     request.session.setdefault("history", []).append({
-        "timestamp": time.time(),
+        "timestamp": datetime.now().strftime('%d.%m.%Y %H:%M:%S'),
         "usd_to_rub_rate": usd_to_rub_rate,
     })
     request.session["history"] = request.session["history"][-MAX_REQUESTS:]
@@ -24,4 +25,5 @@ def get_current_usd(request):
     time.sleep(10)
 
     # Return actual rate in JSON format
-    return JsonResponse({"USD_to_RUB_rate": usd_to_rub_rate, "history": request.session.get("history", [])})
+    return JsonResponse({"USD_to_RUB_rate": usd_to_rub_rate,
+                         "history": request.session.get("history", [])})
